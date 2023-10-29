@@ -74,7 +74,6 @@ function setUpMetamask(){
       walletIdEl.innerHTML = account;
       signer = await provider.getSigner(account);
     }
-    currentNetworkId = await ethereum.request({ method: 'net_version' });
   });
 }
 function setUpListeners() {
