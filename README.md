@@ -215,10 +215,31 @@ Crear un front-end minimalista para poder interactuar con el contrato de `Public
 
 # Completar
 
-1. Pega aquí la tx de una compra de un NFT `común` en `Public Sale` usando `UDSC`:
-2. Pega aquí la tx de una compra de un NFT `raro` en `Public Sale` usando `BBTKN`:
-3. Pega aquí la tx de una compra de un NFT `legendario` en `Public Sale` usando `UDSC`:
-4. Pega aquí la tx de una compra de un NFT `mistico` en `Public Sale` usando `ether` y un `id` en específico:
-5. Pega aquí la tx de una compra de un NFT `mistico` en `Public Sale` usando `ether` (random id):
-6. Pega aquí la tx de una acuñación whitelist de un NFT en el contrato `NFT`:
-7. Pega aquí la tx de un buy back de NFT en el contrato `NFT`:
+1. ega aquí la tx de una compra de un NFT `común` en `Public Sale` usando `UDSC`:
+Public Sale Hash 0xc7fde1f3d4fb8cea556cf298e81d1ccf43189dc6bd4422ae75a6ba5b5303b2c0
+Cuy Collection Nft Hash (Mumbai) — Nft Id: 105
+0xd0a5ed8bf45cdadbdb83640e9b563920c09e3d1e7723a355157ba818e05d4333
+2. Pega aquí la tx de una compra de un NFT `raro` en `Public Sale` usando `BBTKN`:
+Public Sale Hash 0xda4d0916221a574a40db2cd936440cf53cd8e37fbecde5cdc59ba9b77602d276
+Cuy Collection Nft Hash (Mumbai) — Nft Id: 220
+0x430d846b3aedbecc3c9c9a20455c6e01a91f779aa19bea5fc68a7ae8feae3e54
+3. Pega aquí la tx de una compra de un NFT `legendario` en `Public Sale` usando `UDSC`:
+Public Sale Hash (give change) 0xc79b8313d37a4c84a5e50e166c18d8325fd8dcc79ac168097f2dac9cb3526b0e
+Cuy Collection Nft Hash (Mumbai) — Nft Id: 505
+0x92fa45a95e6fbd2c62377f0aed22d5417eec09bd5399caeb1c50829d464fed32
+4. Pega aquí la tx de una compra de un NFT `mistico` en `Public Sale` usando `ether` y un `id` en específico:
+Public Sale Hash 0x941985d45e6d078878db331eb4de02f3c443af5fcab982c5093cc0e8e6ca0b50
+Cuy Collection Nft Hash (Mumbai) — Nft Id: 701
+0xb545649e4218c61bceb4b2f827e61639dc0c8b27da936f30472b22b9be809159
+5. Pega aquí la tx de una compra de un NFT `mistico` en `Public Sale` usando `ether` (random id):
+Public Sale Hash 0x4a82951876df67bf2db739ae474b7d5740c279f6d8be7f45c8e855fe5039a64c
+Cuy Collection Nft Hash (Mumbai) — Nft Id: 796
+0x292e2f4d72c9d6f5f65291a6ca08907499cab2a19d4760866f61c3e7b36dffc4
+6. Pega aquí la tx de una acuñación whitelist de un NFT en el contrato `NFT`:
+Cuy Collection Nft Hash (Mumbai) — Nft Id: 1000
+0x06863f70361f4cd75613eb41ecb5a70318536846db17d59a42d283f4426dddc3
+7. Pega aquí la tx de un buy back de NFT en el contrato `NFT`:
+Buy Back CuyNftCollection (Mumbai)
+0x0638ec1e73a9b8d828e530ea75e6d3f7dfd5a7e188779a363c35768a2d87ac2c
+Mint BBites Token (Goerli)
+0xbb559f011cb7ae910171d56e51a9ec130b6350e113a2e7d1638fa2ccd905fdb9
