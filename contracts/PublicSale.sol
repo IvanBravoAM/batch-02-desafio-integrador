@@ -125,9 +125,6 @@ contract PublicSale is
 
     // La segunda manera de compra es usando USDC. El método a usar es purchaseWithUSDC(uint256 _id) y el usuario escoge el id a comprar y se emite el evento. Internamente, en este método se usa el pool de liquidez para intercambiar los USDC por una cantidad exacta de BBTKN. Aplica para ids en el rango 0 - 699. Dado que no se sabe la cantidad de USDC a depositar, se sugiere dar el approve de un monto seguro por parte del usuario. Este método tiene que dar el vuelto del USDC que no se llegó a usar en la compra.
     function purchaseWithUSDC(uint256 _id) checkAvailability(_id) external {
-        // transfiere _amountIn de USDC a este contrato
-        // llama a swapTokensForExactTokens: valor de retorno de este metodo es cuanto gastaste del token input
-        // transfiere el excedente de USDC a msg.sender
         require(_id <= 699, "Invalid NFT ID");
 
         uint256 _usdcAmount =usdCoin.allowance(msg.sender, address(this));
@@ -171,6 +168,7 @@ contract PublicSale is
 
     // La tercera manera de compra es enviando exactamente 0.01 ether y ejecutando, al mismo tiempo, el método purchaseWithEtherAndId(uint256 _id). El usuario escoge el id a comprar y se emite el evento. Aplica para ids en el rango 700 - 999. El ether es acumulado en el mismo contrato Public Sale. Dar vuelto si se envía más de 0.01 ether.
     function purchaseWithEtherAndId(uint256 _id) checkAvailability(_id) public payable {
+        require(_id >= 700 && _id <= 999, "Invalid NFT ID");
         // Accumulate ether in the contract
         etherBalance += msg.value;
 
@@ -190,7 +188,7 @@ contract PublicSale is
     }
 
     // La cuarta manera de compra es enviando exactamente 0.01 ether al contrato sin ejecutar ningún metodo. Aleatoriamente se escoge un id de NFT que esté disponible y se emite el evento. Aplica para ids en el rango 700 - 999. El ether es acumulado en el mismo contrato Public Sale.
-    function depositEthForARandomNft() public payable {
+    function depositEthForARandomNft() internal {
         // Check if the sent ether is exactly 0.01 ether
         require(msg.value == 0.01 ether, "Send exactly 0.01 ether");
 
@@ -209,15 +207,12 @@ contract PublicSale is
 
     function generateRandomNFTId() internal view returns (uint256) {
         uint256 id;
-        // Implement a random number generator that selects an available NFT ID
-        do{
             uint256 seed = uint256(
                 keccak256(
                     abi.encodePacked(block.timestamp, blockhash(block.number - 1), msg.sender)
                 )
             );
             id = (seed % 300) + 700;
-        }while(!nftPurchased[id]);
         return id; // Generates a random ID in the range 700-999
     }
 
@@ -232,10 +227,11 @@ contract PublicSale is
             price = _id * 20;
         } else if (_id <= 699) {
             // Legendario: Según días pasados desde una fecha constante en el contrato
-            uint256 daysPassed = _calculateDaysPassed(); // Implementa esta función
+            uint256 daysPassed = _calculateDaysPassed();
             // Calcula el precio legendario según los días pasados
             // El primer día empieza en 10,000 BBTKN. Por cada día pasado, el precio se incrementa en 2,000 BBTKN. El precio máximo es 90,000 BBTKN.
             price= calculateLegendaryPrice(daysPassed);
+            return price;
         } else {
             return 0.01 ether;
         } 
@@ -243,7 +239,6 @@ contract PublicSale is
     }
 
     function _calculateDaysPassed() internal view returns (uint256) {
-        //require(block.timestamp < startDate, " completar code");
         return (block.timestamp - startDate) / 1 days;
     }
 
@@ -252,30 +247,23 @@ contract PublicSale is
     ) internal pure returns (uint256) {
         // Implementa la lógica para calcular el precio legendario según los días pasados
         uint256 price = 10000 + (_daysPassed * 2000); // Precio legendario basado en días
-        if (price >= MAX_PRICE_NFT) {
+        if (price >= (MAX_PRICE_NFT/BB_DECIMALS)) {
             return MAX_PRICE_NFT;
         }
-        return price;
+        return price * BB_DECIMALS;
     }
 
-    function swapTokensForExactTokens(
-        uint amountOut,
-        uint amountInMax,
-        address[] memory path, // [token a entregar, token a recibir]
-        address to,
-        uint deadline
-    ) public returns (uint256[] memory) {
-        address origenToken = path[0];
-        IERC20(origenToken).approve(routerAddress, amountInMax);
+    function getUSDCAmount(
+        uint amount
+    ) public view returns (uint256 amountIn) {
+        address[] memory tokens = new address[](2);
+        tokens[0] = usdCoinAddress;
+        tokens[1] = bbtknAddress;
 
-        uint256[] memory _amounts = router.swapTokensForExactTokens(
-            amountOut,
-            amountInMax,
-            path,
-            to,
-            deadline
+        uint256[] memory _amounts = router.getAmountsIn(
+            amount,tokens
         );
-        return _amounts;
+        return _amounts[0];
     }
 
     // El método llamado withdrawEther() public onlyRole(DEFAULT_ADMIN_ROLE) permite a cualquier admin transferirse el ether que fue depositado a este contrato.

@@ -1,18 +1,14 @@
 var { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 var { expect } = require("chai");
 const { ethers, upgrades, network } = require('hardhat');
-const { MerkleTree } = require("merkletreejs");
 const walletAndIds = require("../wallets/walletList")
 const {construyendoPruebas, construyendoMerkleTree, getRootFromMT} = require("../utils/merkleTree");
-var { time } = require("@nomicfoundation/hardhat-network-helpers");
 
 const { getRole, deploySC, deploySCNoUp, ex, pEth } = require("../utils");
 
 const MINTER_ROLE = getRole("MINTER_ROLE");
 const BURNER_ROLE = getRole("BURNER_ROLE");
 
-// 00 horas del 30 de septiembre del 2023 GMT
-var startDate = 1696032000;
 
 describe("Cuy Collection Nft Testing", function () {
     async function deployFixture() {
@@ -104,9 +100,8 @@ describe("Cuy Collection Nft Testing", function () {
             construyendoMerkleTree()
             const root = getRootFromMT();
             await _cuyNft.actualizarRaiz(root);
-            console.log(root);
         }); 
-        xit('Verify proofs for all Whitelist wallets',async() => {
+        it('Verify proofs for all Whitelist wallets',async() => {
             for (var [i, wallet] of walletAndIds.entries()) {
 
                 let pruebas = construyendoPruebas(wallet.id, wallet.address);
@@ -129,5 +124,30 @@ describe("Cuy Collection Nft Testing", function () {
             );
         });
     });
-    
+    describe("Modifiers", () => {
+        var _publicSale, owner, _cuyNft, alice;
+        beforeEach(async () => {
+            const fixture = await loadFixture(deployFixture);
+            owner = fixture.owner;
+            alice = fixture.alice;
+            _cuyNft = fixture.cuyNft;
+        }); 
+        it("Mint only MINTER ROLE", async () => {
+            const mint = _cuyNft.connect(alice).safeMint;
+            await expect(
+            mint(alice.address, 102)
+            ).to.revertedWith(
+            `AccessControl: account ${alice.address.toLowerCase()} is missing role ${MINTER_ROLE}`
+            );
+        });
+        it("When not paused", async () => {
+            await _cuyNft.connect(owner).pause();
+            const mint = _cuyNft.connect(owner).safeMint;
+            await expect(
+            mint(alice.address, 102)
+            ).to.revertedWith(
+            `Pausable: paused`
+            );
+        });
+    });
 });

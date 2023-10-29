@@ -51,5 +51,4 @@ let encodedData = '0x'; // Start with '0x' for a hex string
 for (const value of proof) {
   encodedData += value.slice(2); // Remove '0x' prefix and concatenate
 }
-console.log(encodedData);
 module.exports = { getRootFromMT,construyendoMerkleTree,construyendoPruebas };

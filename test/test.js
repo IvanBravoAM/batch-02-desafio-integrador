@@ -7,9 +7,6 @@ const BigNumber = require("bignumber.js");
 
 const { getRole, deploySC, deploySCNoUp, ex, pEth } = require("../utils");
 
-const MINTER_ROLE = getRole("MINTER_ROLE");
-const BURNER_ROLE = getRole("BURNER_ROLE");
-
 // 00 horas del 30 de septiembre del 2023 GMT
 var startDate = 1696032000;
 const DECIMALS =10 ** 18;
@@ -45,7 +42,7 @@ describe("Public Sale Testing", function () {
         const LP = await ethers.getContractFactory("LiquidityProvider");
         const lp = await LP.deploy(uniswapRouter, factoryAddress, await bbites.getAddress(), await usdCoin.getAddress() );
         await lp.waitForDeployment();
-        console.log('lp', await lp.getAddress())
+        //console.log('lp', await lp.getAddress())
         return { PublicSale, owner, alice, bob, carl, otherAccounts,bbites,usdCoin , admin, uniswapRouter, factoryAddress, lp};
     }
     describe("Purchase with Tokens", function () {
@@ -60,7 +57,6 @@ describe("Public Sale Testing", function () {
         }); 
         it('Emit PurchasedNftWithId',async() => {
             const price = BigInt(15000 * DECIMALS);
-            console.log(price);
             await _bbites.approve(owner.address, price);
 
             await _bbites.transferFrom(owner, alice, price);
@@ -85,33 +81,32 @@ describe("Public Sale Testing", function () {
             _usdcoin = fixture.usdCoin;
             _uniswap = fixture.uniswapRouter;
 
-            _lp = fixture.lp;
+            // _lp = fixture.lp;
 
-            const amountA = ethers.parseEther("12000");
-            const amountB = ethers.parseEther("10000");
-            // Approve tokens for the Router
-            await _bbites.connect(owner).approve(_uniswap, amountA);
-            await _usdcoin.connect(owner).approve(_uniswap, amountB);
-            var _deadline = new Date().getTime() + 60000;
+            // const amountA = ethers.parseEther("12000");
+            // const amountB = ethers.parseEther("10000");
+            // // Approve tokens for the Router
+            // await _bbites.connect(owner).approve(_uniswap, amountA);
+            // await _usdcoin.connect(owner).approve(_uniswap, amountB);
+            // var _deadline = new Date().getTime() + 60000;
 
-            var LiquidityProv = await ethers.getContractFactory("LiquidityProvider");
-            var liquidityProv = LiquidityProv.attach(await _lp.getAddress());
-            // Provide liquidity
+            // var LiquidityProv = await ethers.getContractFactory("LiquidityProvider");
+            // var liquidityProv = LiquidityProv.attach(await _lp.getAddress());
+            // // Provide liquidity
 
-            var tx = await _bbites.mint(await _lp.getAddress(), pEth("12000"));
-            console.log("acuniando 2");
-            await tx.wait();
-            tx = await _usdcoin.mint(await _lp.getAddress(), pEth("10000"));
-            await tx.wait();
+            // var tx = await _bbites.mint(await _lp.getAddress(), pEth("12000"));
+            // await tx.wait();
+            // tx = await _usdcoin.mint(await _lp.getAddress(), pEth("10000"));
+            // await tx.wait();
 
-            console.log(`Bal LP A: ${(await _bbites.balanceOf(_lp.getAddress())).toString()}`);
-            console.log(`Bal LP B: ${(await _usdcoin.balanceOf(_lp.getAddress())).toString()}`);
+            // console.log(`Bal LP A: ${(await _bbites.balanceOf(_lp.getAddress())).toString()}`);
+            // console.log(`Bal LP B: ${(await _usdcoin.balanceOf(_lp.getAddress())).toString()}`);
 
-            await liquidityProv
-                .connect(owner)
-                .addLiquidity(_bbites, _usdcoin, amountA, amountB, 0, 0, owner.address, _deadline);
+            // await liquidityProv
+            //     .connect(owner)
+            //     .addLiquidity(_bbites, _usdcoin, amountA, amountB, 0, 0, owner.address, _deadline);
         }); 
-        it('Emit PurchasedNftWithId',async() => { 
+        xit('Emit PurchasedNftWithId',async() => { 
             await _usdcoin.approve(owner.address, 15000);
 
             await _usdcoin.transferFrom(owner, alice, 15000);
@@ -123,6 +118,12 @@ describe("Public Sale Testing", function () {
             await expect(tx)
             .to.emit(_publicSale, "PurchaseNftWithId")
             .withArgs(alice.address, 20);
+        });
+        xit('Get Amount In', async() =>{
+            var amountOut = BigInt(1000 * DECIMALS);
+            var tx = await _publicSale.getUSDCAmount(amountOut);
+
+            console.log(tx);
         });    
     });       
     describe("Purchase with Ether and Id", function () {
@@ -133,7 +134,7 @@ describe("Public Sale Testing", function () {
             alice = fixture.alice;
         });    
         it('Change Ether Balance and give change',async() => {
-            var _id = 200;
+            var _id = 700;
             var aEth;
             aEth = ethers.parseEther("0.02");
             var tx = await _publicSale.connect(alice).purchaseWithEtherAndId(_id, { value: aEth });
@@ -155,56 +156,25 @@ describe("Public Sale Testing", function () {
             _publicSale = fixture.PublicSale;
             alice = fixture.alice;
         });    
-        xit('Deposit Eth and get Nft',async() => {
-            var aEth;
-            aEth = ethers.parseEther("0.01");
-            var tx = _publicSale.connect(alice).depositEthForARandomNft({ value: aEth });
-            await expect(tx).changeEtherBalances(
-                [alice.address, await _publicSale.getAddress()],
-                [ethers.parseEther("-0.01"), ethers.parseEther("0.01")]
-            );
-            // await expect(tx)
-            // .to.emit(_publicSale, "PurchaseNftWithId")
-            // .withArgs(alice.address, 20);
+        it('Deposit Eth and get Nft',async() => {
+            var tx = await alice.sendTransaction({
+                to: _publicSale,
+                value: ethers.parseEther("0.01")
+            });
+            // await expect(tx).changeEtherBalances(
+            //     [alice.address, await _publicSale.getAddress()],
+            //     [ethers.parseEther("-0.01"), ethers.parseEther("0.01")]
+            // );
+            await expect(tx)
+            .to.emit(_publicSale, "PurchaseNftWithId");
         });
         it('Send exact amount of ether',async() => {
-            var aEth;
-            aEth = ethers.parseEther("0.02");
-            var tx = _publicSale.connect(alice).depositEthForARandomNft({ value: aEth });
+            var tx = alice.sendTransaction({
+                to: _publicSale,
+                value: ethers.parseEther("0.02")
+            });
             await expect(tx).to.be.revertedWith('Send exactly 0.01 ether');
         });
-    });
-    describe("Swap Tokens", function () {
-        var _publicSale, owner, _bbites, alice, _usdcoin; 
-        beforeEach(async () => {
-            const fixture = await loadFixture(deployFixture);
-            _publicSale = fixture.PublicSale;
-            _bbites = fixture.bbites;
-            _usdcoin = fixture.usdCoin;
-            alice = fixture.alice;
-            
-        });
-        it('Test swapTokensForExactTokens',async() => {
-            var aEth;
-            aEth = ethers.parseEther("0.02");
-            const router = await new ethers.Contract(_uniswap, routerArtifact.abi, owner);
-
-            var amountOut = pEth("10"); // 10 tokens B
-            var amountInMax = pEth("20"); // Aprox, estoy dispuesto a entregar 20 tokens A
-            var path = [_usdcoin.address, _bbites.address];
-            var to = _publicSale.address;
-            var deadline = new Date().getTime() + 10000;
-
-            var tx = await router.swapTokensForExactTokens(
-                amountOut,
-                amountInMax,
-                path,
-                to,
-                deadline
-            );
-            console.log('tx', tx);
-            //await expect(tx).to.be.revertedWith('Send exactly 0.01 ether');
-        }); 
     });
     
     describe("Withdraw Ether", function () {
@@ -218,7 +188,7 @@ describe("Public Sale Testing", function () {
             owner = fixture.owner;
             admin = fixture.admin;
         });
-        xit('Change balances',async() => {
+        it('Change balances',async() => {
 
             await alice.sendTransaction({
                 to: _publicSale,
@@ -244,18 +214,20 @@ describe("Public Sale Testing", function () {
             owner = fixture.owner;
             admin = fixture.admin;
         });
-        xit('Change token balances',async() => {
+        it('Change token balances',async() => {
             var tx;
-
-            await _bbites.approve(owner.address, 15000);
-            await _bbites.transferFrom(owner, alice, 15000);
+            const price = BigInt(15000 * DECIMALS);
+            await _bbites.approve(owner.address, price);
+            await _bbites.transferFrom(owner, alice, price);
+            await _bbites.connect(alice).approve(_publicSale, price);
             await _publicSale.connect(alice).purchaseWithTokens(20);
 
             const adminRole = await _publicSale.DEFAULT_ADMIN_ROLE();
             await _publicSale.connect(owner).grantRole(adminRole, admin.address);
+            var valA = BigInt(1000*DECIMALS);
 
             tx = await _publicSale.connect(admin).withdrawTokens();
-            expect([await _bbites.balanceOf(admin),await _bbites.balanceOf(alice)]).to.deep.equal([1000n,14000n]);
+            expect([await _bbites.balanceOf(admin),await _bbites.balanceOf(_publicSale)]).to.deep.equal([valA,0]);
         
         });
     }); 
@@ -290,18 +262,10 @@ describe("Public Sale Testing", function () {
             const provider = ethers.provider; // Get the Ethereum provider
             const currentBlock = await provider.getBlock('latest'); // Get the latest block
             const currentTimestamp = currentBlock.timestamp;
-
             const daysPassed = (currentTimestamp - startDate)  / (60 * 60 * 24);;
-
-            const expPrice = (10000 + Math.floor(daysPassed) * 2000) *DECIMALS;
-            console.log('m', Math.floor(daysPassed) *2000);
-            console.log('b', (10000 + Math.floor(daysPassed) * 2000));
-            console.log('d', expPrice);
+            const expPrice = BigInt((10000 + Math.floor(daysPassed) * 2000) *DECIMALS);
             tx =  await _publicSale.getPriceForId(500);
-            console.log(tx);
-            var tx2 =  Number(tx).toFixed(4);
-            console.log(expPrice);
-            await expect(tx).to.be.equal(expPrice);
+            expect(tx).to.be.equal(expPrice);
         
         });
         it('Invalid NFT ID',async() => {

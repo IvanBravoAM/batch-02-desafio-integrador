@@ -45,6 +45,15 @@
         <span id="approveErrorUSDC" style="color: red;"></span>
     </div>
 
+    <h2>Get USDC for BBToken</h2>
+    <div>
+        <input type="text" id="calculateInput" name="calculateInput" placeholder="BBtokens Amount out (w/o decimals)">
+        <button id="calculateButtonUsdc">Calculate</button>
+        <label>USDC Amount In</label>
+        <span id="usdcTknAmount"></span>
+        <span id="calculateError" style="color: red;"></span>
+    </div>
+
     </br>
     <h2>Comprando NFTs en Public Sale en Goerli</h2>
     <div>
@@ -58,7 +67,7 @@
     <div>
         <label for="purchaseInputUSDC">Purchase By Id with USDC (0 - 699)</label>
         <input type="number" id="purchaseInputUSDC" name="purchaseInputUSDC" placeholder="NFT id">
-        <input type="number" id="amountInUSDCInput" name="amountInUSDCInput" placeholder="UDSC amount in">
+
         <button id="purchaseButtonUSDC">Purchase</button>
         <span id="purchaseErrorUSDC" style="color: red;"></span>
     </div>
@@ -117,6 +126,9 @@
 
     </br>
     <h2>Eventos</h2>
+    <h3>Approval</h3>
+    <div id="appList"></div>
+    
     <h3>Contrato Public Sale (Goerli)</h3>
     <div id="pubSList"></div>
 

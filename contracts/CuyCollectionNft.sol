@@ -60,7 +60,7 @@ contract CuyCollectionNft is
     event Burn(address account, uint256 id);
 
     function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://QmTWvm55znTX6NmgopdUpJX8CJsNzhGJY4bJVmMvoJP5hA/";
+        return "ipfs://QmWJ3udcvB2XjvgWjcn8YrC7w8VEL2VWaUMq1x6Ns4t29k/";
     }
     function actualizarRaiz(bytes32 _root) public {
         root = _root;
@@ -72,7 +72,7 @@ contract CuyCollectionNft is
     ) public onlyRole(MINTER_ROLE) whenNotPaused {
         require(tokenId >= 0 && tokenId <= 999, "Wrong token ID"); // IDs permitidos del 0 al 999
         _safeMint(to, tokenId);
-        owners[tokenId] = msg.sender;
+        owners[tokenId] = to;
     }
 
     // Posee el método safeMintWhiteList(address to, uint256 tokenId, bytes32[] proofs) public que será llamado por cada una de las 1000 billeteras de la lista blanca. Internamente este método valida que to y tokenId sean parte de la lista. Así también, se debe habilitar en el front-end una manera de solicitar las pruebas. Dado un address y un uint256, el front-end te entregará el array de pruebas a usarse como argumento de este método. Lleva whenNotPaused. Puede ser llamado por cualquiera.
@@ -86,7 +86,7 @@ contract CuyCollectionNft is
             "No eres parte de la lista"
         );
         _safeMint(to, tokenId);
-        owners[tokenId] = msg.sender;
+        owners[tokenId] = to;
     }
 
     function _hashearInfo(

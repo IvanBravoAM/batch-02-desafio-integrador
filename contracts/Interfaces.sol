@@ -22,6 +22,8 @@ interface IUniSwapV2Router02 {
         address to,
         uint deadline
     ) external returns (uint amountA, uint amountB, uint liquidity);
+
+    function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);
 }
 
 interface IUniswapV2Factory {

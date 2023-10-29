@@ -22,7 +22,7 @@ exports.handler = async function (data) {
   var { account, id } = event[0].params;
 
   // Ejecutar 'safeMint' en Mumbai del contrato CuyCollectionNft
-  var cuyNftAdd = "0x277c82d54D8D71eCC8E479998d3a93bFF582F819";
+  var cuyNftAdd = "0x97454e9FBB93eade7f3305AEA90e46969c57b7dc";
   var cuyNftAbi = ["function safeMint(address to, uint256 cuyNftId)"];
   var cuyNftContract = new ethers.Contract(cuyNftAdd, cuyNftAbi, signer);
   var tx = await cuyNftContract.safeMint(account, id);
